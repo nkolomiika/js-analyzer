@@ -1,0 +1,10 @@
+# Исключаем временные и резервные файлы
+js_files/
+origin.js_analyzer.py
+
+# Также полезно исключить:
+*.log
+.DS_Store
+__pycache__/
+*.pyc
+.env
