@@ -161,14 +161,22 @@ def run_analysis_on_files(downloaded_info):
                     base_for_absolute = clean_base_url.split("?")[0]
                     _, absolute_url = process_endpoint(base_for_absolute, domain, scheme)
 
-                    method_lines = []
+                    # Используем множество для дедупликации строк методов
+                    method_lines_set = set()
                     for m in methods:
                         parts = [m['method'], f"type: {m['type']}"]
                         if m['query_params']:
-                            parts.append(f"query: {', '.join(m['query_params'])}")
+                            parts.append(f"query: {', '.join(sorted(m['query_params']))}")
                         if m['body_params']:
-                            parts.append(f"body: {', '.join(m['body_params'])}")
-                        method_lines.append(" | ".join(parts))
+                            parts.append(f"body: {', '.join(sorted(m['body_params']))}")
+                        method_line = " | ".join(parts)
+                        method_lines_set.add(method_line)
+
+                    # Сортируем для стабильного порядка
+                    method_lines = sorted(method_lines_set)
+
+                    if not method_lines:
+                        continue
 
                     display_text = clean_base_url + "\n" + "\n".join(f"  • {line}" for line in method_lines)
                     domain_data[domain][rel_path]['jsluice'].append((display_text, absolute_url))
